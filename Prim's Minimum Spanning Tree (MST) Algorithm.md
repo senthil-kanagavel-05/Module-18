@@ -1,78 +1,111 @@
-# Ex. No: 18D - Travelling Salesman Problem (TSP)
+# Ex. No: 18A - Prim's Minimum Spanning Tree (MST) Algorithm
 
 ## AIM:
-To write a Python program to find the shortest possible route that visits every city exactly once and returns to the starting point using the **Travelling Salesman Problem (TSP)** approach.
+To write a Python program for **Prim's Minimum Spanning Tree (MST)** algorithm.
 
 ## ALGORITHM:
 
-**Step 1**: Start the program.
+**Step 1**: Initialize the `key[]` array to infinity, set the first vertex's key to `0`, and create `mstSet[]` and `parent[]` arrays.
 
-**Step 2**: Input the number of cities and the distance matrix.
+**Step 2**: Select the vertex with the smallest key value not yet included in `mstSet`.
 
-**Step 3**: Set the starting city (e.g., city `0`).
+**Step 3**: Add the selected vertex to `mstSet`.
 
-**Step 4**: Generate all possible permutations of the remaining cities.
+**Step 4**: For all adjacent vertices:
+- If the edge weight is smaller than their current key value, and the vertex is not in `mstSet`, then:
+  - Update their key value
+  - Update their parent to the current vertex
 
-**Step 5**: For each permutation:
-- Calculate the total cost of traveling through the permutation starting and ending at city `0`.
-- Keep track of the **minimum cost** and the corresponding route.
+**Step 5**: Repeat Steps 2–4 until all vertices are included in the MST.
 
-**Step 6**: Return the **route** and the **minimum cost**.
-
-**Step 7**: End the program.
+**Step 6**: Print the resulting Minimum Spanning Tree using the `parent[]` array.
 
 ## PYTHON PROGRAM
 
 ```python
 
-# Python3 program to implement traveling salesman
-# problem using naive approach.
-from sys import maxsize
-from itertools import permutations
-V = 4
+# A Python program for Prim's Minimum Spanning Tree (MST) algorithm.
+# The program is for adjacency matrix representation of the graph
 
-# implementation of traveling Salesman Problem
-def travellingSalesmanProblem(graph, s):
+import sys # Library for INT_MAX
 
-	# store all vertex apart from source vertex
-	vertex = []
-	for i in range(V):
-		if i != s:
-		    vertex.append(i)
-	# store minimum weight Hamiltonian Cycle
-	min_path = maxsize
-	next_permutation=permutations(vertex)
-	for i in next_permutation:
+class Graph():
 
-		# store current Path weight(cost)
-		current_pathweight = 0
+	def __init__(self, vertices):
+		self.V = vertices
+		self.graph = [[0 for column in range(vertices)]
+					for row in range(vertices)]
 
-		# compute current path weight
-		k = s
-		for j in i:
-			current_pathweight += graph[k][j]
-			k = j
-		current_pathweight += graph[k][s]
+	# A utility function to print the constructed MST stored in parent[]
+	def printMST(self, parent):
+		print ("Edge   Weight")
+		for i in range(1, self.V):
+			print (parent[i], "-", i, "  ",self.graph[i][parent[i]])
 
-		# update minimum
-		min_path = min(min_path, current_pathweight)
-		
-	return min_path
+	# A utility function to find the vertex with
+	# minimum distance value, from the set of vertices
+	# not yet included in shortest path tree
+	def minKey(self, key, mstSet):
 
+		# Initialize min value
+		min = sys.maxsize
 
-# Driver Code
-if __name__ == "__main__":
+		for v in range(self.V):
+			if key[v] < min and mstSet[v] == False:
+				min = key[v]
+				min_index = v
 
-	# matrix representation of graph
-	graph = [[0, 10, 15, 20], [10, 0, 35, 25],
-			[15, 35, 0, 30], [20, 25, 30, 0]]
-	s = int(input())
-	print(travellingSalesmanProblem(graph, s))
+		return min_index
+
+	# Function to construct and print MST for a graph
+	# represented using adjacency matrix representation
+	def primMST(self):
+
+		# Key values used to pick minimum weight edge in cut
+		key = [sys.maxsize] * self.V
+		parent = [None] * self.V # Array to store constructed MST
+		# Make key 0 so that this vertex is picked as first vertex
+		key[0] = 0
+		mstSet = [False] * self.V
+
+		parent[0] = -1 # First node is always the root of
+
+		for cout in range(self.V):
+
+			# Pick the minimum distance vertex from
+			# the set of vertices not yet processed.
+			# u is always equal to src in first iteration
+			
+			#--------
+			#code here
+			u=self.minKey(key,mstSet)
+			mstSet[u]=True
+			for v in range(self.V):
+			    if self.graph[u][v]>0 and mstSet[v]==False and key[v]>self.graph[u][v]:
+			        key[v]=self.graph[u][v]
+			        parent[v]=u
+			
+			
+			#--------
+
+			# Put the minimum distance vertex in
+			# the shortest path tree
+			
+		self.printMST(parent)
+
+g = Graph(5)
+g.graph = [ [0, 2, 0, 6, 0],
+			[2, 0, 3, 8, 5],
+			[0, 3, 0, 0, 7],
+			[6, 8, 0, 0, 9],
+			[0, 5, 7, 9, 0]]
+
+g.primMST();
 ```
 
 ## OUTPUT
 
-<img width="810" height="166" alt="image" src="https://github.com/user-attachments/assets/048d9385-c153-4b4d-831e-1aff56594907" />
+<img width="817" height="267" alt="image" src="https://github.com/user-attachments/assets/5b54d6e9-832e-4337-90ce-a5a02f1941fa" />
 
 ## RESULT
 
